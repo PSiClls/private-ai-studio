@@ -2,28 +2,11 @@ services:
   - type: web
     name: private-ai-studio-backend
     env: python
-    buildCommand: |
-      cd backend
-      python -m venv venv
-      source venv/bin/activate
-      pip install --upgrade pip
-      pip install -r requirements.txt
-    startCommand: |
-      cd backend
-      source venv/bin/activate
-      uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: LLM_PROVIDER
-        sync: false
-      - key: OPENROUTER_API_KEY
-        sync: false
-      - key: OPENROUTER_MODEL
-        value: meta-llama/llama-3.1-8b-instruct
-      - key: DATABASE_URL
-        generate:
-          type: postgresql
+        value: 3.11.9
       - key: CORS_ORIGINS
         value: https://your-app.vercel.app
       - key: APP_NAME
