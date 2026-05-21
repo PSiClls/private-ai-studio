@@ -1,7 +1,7 @@
 services:
   - type: web
     name: private-ai-studio-backend
-    env: python
+    runtime: python
     buildCommand: cd backend && pip install -r requirements.txt
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
@@ -9,8 +9,12 @@ services:
         value: 3.11.9
       - key: CORS_ORIGINS
         value: https://your-app.vercel.app
-      - key: APP_NAME
-        value: Private AI Studio
+      - key: LLM_PROVIDER
+        value: openrouter
+      - key: OPENROUTER_MODEL
+        value: meta-llama/llama-3.1-8b-instruct
+      - key: OPENROUTER_API_KEY
+        sync: false
     disk:
       name: studio-data
       mountPath: /root/.private-ai-studio
