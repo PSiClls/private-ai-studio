@@ -3,6 +3,9 @@ from .embeddings import embedding_service, vector_store
 
 
 class RAGService:
+    async def is_available(self) -> bool:
+        return await embedding_service.is_available()
+
     async def query(
         self,
         query_text: str,
@@ -10,6 +13,9 @@ class RAGService:
         n_results: int = 5,
         relevance_threshold: float = 0.0,
     ) -> List[dict]:
+        if not await self.is_available():
+            return []
+
         query_emb = await embedding_service.embed_query(query_text)
 
         results = await vector_store.search(

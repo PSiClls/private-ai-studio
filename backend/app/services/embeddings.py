@@ -16,8 +16,11 @@ class EmbeddingService:
         self._model = await loop.run_in_executor(None, self._load_model_sync)
 
     def _load_model_sync(self):
-        from sentence_transformers import SentenceTransformer
-        return SentenceTransformer(self._model_name)
+        try:
+            from sentence_transformers import SentenceTransformer
+            return SentenceTransformer(self._model_name)
+        except ImportError:
+            raise RuntimeError("sentence-transformers not installed. Install with: pip install sentence-transformers")
 
     async def embed(self, texts: List[str]) -> List[List[float]]:
         await self._load_model()
@@ -33,6 +36,8 @@ class EmbeddingService:
         try:
             await self._load_model()
             return True
+        except ImportError:
+            return False
         except Exception:
             return False
 
