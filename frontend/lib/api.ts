@@ -1,9 +1,7 @@
 import type { Conversation, Message, OllamaModel, HealthStatus } from "@/types"
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ""
-
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${url}`, {
+  const res = await fetch(url, {
     ...init,
     headers: {
       "Content-Type": "application/json",
