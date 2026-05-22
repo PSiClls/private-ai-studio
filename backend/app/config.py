@@ -1,7 +1,8 @@
 from pathlib import Path
 from typing import List, Optional
 import json
-from pydantic import field_validator, ConfigDict
+import os
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -11,7 +12,6 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite+aiosqlite:///{data_dir / 'studio.db'}"
     chroma_persist_dir: str = str(data_dir / "chroma")
     embedding_model: str = "all-MiniLM-L6-v2"
-    cors_origins: List[str] = ["http://localhost:3000"]
 
     model_post_process_dir: Path = data_dir / "models"
     image_output_dir: Path = data_dir / "images"
@@ -35,19 +35,20 @@ class Settings(BaseSettings):
 
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v):
-        if isinstance(v, str):
-            try:
-                return json.loads(v)
-            except json.JSONDecodeError:
-                return [o.strip() for o in v.split(",") if o.strip()]
-        return v
-
     @property
     def data_dir_path(self) -> Path:
         return self.data_dir
+
+    @property
+    def cors_origins(self) -> List[str]:
+        val = os.environ.get("CORS_ORIGINS", "")
+        if not val:
+            return ["http://localhost:3000", "http://127.0.0.1:3000"]
+        try:
+            parsed = json.loads(val)
+            return parsed if isinstance(parsed, list) else [parsed]
+        except (json.JSONDecodeError, TypeError):
+            return [o.strip() for o in val.split(",") if o.strip()]
 
     def ensure_dirs(self):
         self.data_dir.mkdir(parents=True, exist_ok=True)
