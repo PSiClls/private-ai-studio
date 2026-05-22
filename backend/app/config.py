@@ -10,12 +10,21 @@ class Settings(BaseSettings):
     database_url: str = f"sqlite+aiosqlite:///{data_dir / 'studio.db'}"
     chroma_persist_dir: str = str(data_dir / "chroma")
     embedding_model: str = "all-MiniLM-L6-v2"
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: List[str] = ["http://localhost:3000"]
 
     @field_validator("cors_origins", mode="before")
     @classmethod
-    def default_cors(cls, v):
-        return v or "http://localhost:3000"
+    def parse_cors_origins(cls, v):
+        if isinstance(v, str):
+            try:
+                import json
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return [o.strip() for o in v.split(",") if o.strip()]
+        return v
+
+    @property
+    def data_dir_path(self) -> Path:
 
     model_post_process_dir: Path = data_dir / "models"
     image_output_dir: Path = data_dir / "images"

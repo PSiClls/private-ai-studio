@@ -7,13 +7,11 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
-      - key: CORS_ORIGINS
-        value: https://your-app.vercel.app
       - key: LLM_PROVIDER
-        value: openrouter
-      - key: OPENROUTER_MODEL
-        value: meta-llama/llama-3.1-8b-instruct
-      - key: OPENROUTER_API_KEY
+        value: groq
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: GROQ_API_KEY
         sync: false
     disk:
       name: studio-data
