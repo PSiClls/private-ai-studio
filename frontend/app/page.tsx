@@ -38,6 +38,14 @@ export default function Home() {
       .catch(() => setOllamaOk(false))
   }, [])
 
+  // Keep Render free tier from spinning down
+  useEffect(() => {
+    const interval = setInterval(() => {
+      api.health().catch(() => {})
+    }, 300000) // every 5 minutes
+    return () => clearInterval(interval)
+  }, [])
+
   const studios: { id: Studio; label: string; icon: typeof MessageSquare }[] = [
     { id: "chat", label: "Chat", icon: MessageSquare },
     { id: "images", label: "Images", icon: ImageIcon },
