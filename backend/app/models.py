@@ -13,7 +13,7 @@ class Conversation(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(255), default="New Conversation")
-    model = Column(String(100), default="llama3.2")
+    model = Column(String(100), default="llama-3.1-8b-instant")
     system_prompt = Column(Text, default="")
     created_at = Column(DateTime, default=_utcnow)
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)

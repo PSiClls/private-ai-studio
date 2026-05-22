@@ -125,7 +125,7 @@ export function PromptLibrary({ onSendToChat, onUseInImageStudio, onAddToWorkflo
       const res = await fetch(`/api/prompts/${testPrompt.id}/test`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt_id: testPrompt.id, variables: variableValues, model: "llama3.2" }),
+        body: JSON.stringify({ prompt_id: testPrompt.id, variables: variableValues, model: "llama-3.1-8b-instant" }),
       })
       if (res.ok) {
         const data = await res.json()

@@ -31,7 +31,7 @@ class WorkflowEngine:
             return f"[Error: {settings.llm_provider} is not available]"
         response_text = ""
         async for raw in service.generate_stream(
-            model=model or "llama3.2",
+            model=model or "llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
         ):
             data_str = raw.replace("data: ", "", 1)
@@ -104,7 +104,7 @@ class WorkflowEngine:
                     prompt = input_values.get("prompt", "") or config.get("prompt", "")
                     context = input_values.get("context", "")
                     full_prompt = f"{context}\n\n{prompt}" if context else prompt
-                    model = config.get("model", "llama3.2")
+                    model = config.get("model", "llama-3.1-8b-instant")
                     outputs[nid] = await self._call_llm(model, full_prompt)
 
                 elif node_type == "prompt":

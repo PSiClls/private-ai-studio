@@ -14,7 +14,7 @@ services:
       - key: GROQ_API_KEY
         sync: false
       - key: CORS_ORIGINS
-        value: https://your-app.vercel.app
+        value: https://private-ai-studio-z877.vercel.app
     disk:
       name: studio-data
       mountPath: /root/.private-ai-studio

@@ -5,7 +5,7 @@ import { useChatStore } from "@/store/chat-store"
 import { api } from "@/lib/api"
 import { useToast } from "@/components/ui/toast"
 
-const DEFAULT_MODEL = "llama3.2"
+const DEFAULT_MODEL = "llama-3.1-8b-instant"
 const STREAM_TIMEOUT_MS = 120000
 
 function isAbortError(error: unknown): boolean {

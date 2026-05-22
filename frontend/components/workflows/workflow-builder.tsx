@@ -489,7 +489,7 @@ export function WorkflowBuilder({ initialPromptNode, onPromptNodeSet }: Workflow
                   <div className="mb-2">
                     <label className="text-xs text-muted-foreground block mb-1">Model</label>
                     <Input
-                      value={selectedNode.data.config?.model || "llama3.2"}
+                      value={selectedNode.data.config?.model || "llama-3.1-8b-instant"}
                       onChange={(e) => updateNodeConfig(selectedNode.id, "model", e.target.value)}
                       className="h-8 text-sm"
                     />
