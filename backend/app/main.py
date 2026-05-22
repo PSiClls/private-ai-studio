@@ -58,6 +58,7 @@ app.include_router(system.router)
 
 
 @app.get("/api/health")
+@app.head("/api/health")
 async def health():
     if settings.llm_provider == "ollama":
         llm_ok = await ollama_service.check_available()
