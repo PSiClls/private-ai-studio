@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List, Optional
+import json
 from pydantic import field_validator, ConfigDict
 from pydantic_settings import BaseSettings
 
@@ -11,20 +12,6 @@ class Settings(BaseSettings):
     chroma_persist_dir: str = str(data_dir / "chroma")
     embedding_model: str = "all-MiniLM-L6-v2"
     cors_origins: List[str] = ["http://localhost:3000"]
-
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v):
-        if isinstance(v, str):
-            try:
-                import json
-                return json.loads(v)
-            except json.JSONDecodeError:
-                return [o.strip() for o in v.split(",") if o.strip()]
-        return v
-
-    @property
-    def data_dir_path(self) -> Path:
 
     model_post_process_dir: Path = data_dir / "models"
     image_output_dir: Path = data_dir / "images"
@@ -52,12 +39,11 @@ class Settings(BaseSettings):
     @classmethod
     def parse_cors_origins(cls, v):
         if isinstance(v, str):
-            return [o.strip() for o in v.split(",") if o.strip()]
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return [o.strip() for o in v.split(",") if o.strip()]
         return v
-
-    @property
-    def cors_origins_list(self) -> List[str]:
-        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
     @property
     def data_dir_path(self) -> Path:
