@@ -33,6 +33,9 @@ export function ModelSelector({
         <SelectValue placeholder="Select model" />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem value="auto">
+          Auto (recommended)
+        </SelectItem>
         {models.length === 0 && (
           <SelectItem value="none" disabled>
             No models available

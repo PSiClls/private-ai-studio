@@ -186,7 +186,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Default Model</label>
-              <Input placeholder="llama-3.1-8b-instant" />
+              <Input placeholder="auto" />
             </div>
           </div>
         </DialogContent>

@@ -5,7 +5,7 @@ import { useChatStore } from "@/store/chat-store"
 import { api } from "@/lib/api"
 import { useToast } from "@/components/ui/toast"
 
-const DEFAULT_MODEL = "llama-3.1-8b-instant"
+const DEFAULT_MODEL = "auto"
 const STREAM_TIMEOUT_MS = 120000
 
 function isAbortError(error: unknown): boolean {
@@ -136,6 +136,9 @@ export function useStreamChat() {
                 break
               case "title_suggestion":
                 current.updateConversation(convId, { title: data.data })
+                break
+              case "model_info":
+                current.updateConversation(convId, { model: data.data })
                 break
               case "error":
                 current.setIsStreaming(false)

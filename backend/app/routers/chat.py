@@ -13,6 +13,7 @@ from ..schemas import ChatRequest, RAGChatRequest
 from ..services.ollama import ollama_service
 from ..services.cloud_llm import cloud_llm_service
 from ..services.rag_service import rag_service
+from ..services.model_selector import select_model
 from ..config import settings
 
 router = APIRouter(prefix="/api", tags=["chat"])
@@ -149,13 +150,19 @@ async def chat_stream(body: ChatRequest, db: AsyncSession = Depends(get_db)):
     conv, existing_messages, messages_for_ollama, user_msg = await _prepare_conversation(body, db)
     is_first_message = len(existing_messages) == 0
 
+    selected_model = body.model
+    if selected_model == "auto":
+        selected_model = select_model(body.message)
+
     async def event_generator():
+        if body.model == "auto":
+            yield f"data: {json.dumps({'event': 'model_info', 'data': selected_model})}\n\n"
         async for event in _generate_chat_events(
             db=db,
             conv=conv,
             user_msg=user_msg,
             messages_for_ollama=messages_for_ollama,
-            model=body.model,
+            model=selected_model,
             system_prompt=body.system_prompt or conv.system_prompt,
             message_text=body.message,
             conversation_id=body.conversation_id,
@@ -175,6 +182,10 @@ async def chat_stream(body: ChatRequest, db: AsyncSession = Depends(get_db)):
 @router.post("/chat/rag-stream")
 async def rag_chat_stream(body: RAGChatRequest, db: AsyncSession = Depends(get_db)):
     conv, existing_messages, messages_for_ollama, user_msg = await _prepare_conversation(body, db)
+
+    selected_model = body.model
+    if selected_model == "auto":
+        selected_model = select_model(body.message)
 
     rag_results = await rag_service.query(
         query_text=body.message,
@@ -202,12 +213,14 @@ async def rag_chat_stream(body: RAGChatRequest, db: AsyncSession = Depends(get_d
         yield f"data: {json.dumps({'event': 'sources', 'data': json.dumps(rag_results)})}\n\n"
 
     async def event_generator():
+        if body.model == "auto":
+            yield f"data: {json.dumps({'event': 'model_info', 'data': selected_model})}\n\n"
         async for event in _generate_chat_events(
             db=db,
             conv=conv,
             user_msg=user_msg,
             messages_for_ollama=messages_for_ollama,
-            model=body.model,
+            model=selected_model,
             system_prompt=system_prompt,
             message_text=body.message,
             conversation_id=body.conversation_id,

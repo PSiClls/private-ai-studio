@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 class ConversationCreate(BaseModel):
     title: str = "New Conversation"
-    model: str = "llama-3.1-8b-instant"
+    model: str = "auto"
     system_prompt: str = ""
 
 
@@ -51,14 +51,14 @@ class MessageOut(BaseModel):
 class ChatRequest(BaseModel):
     conversation_id: int
     message: str
-    model: str = "llama-3.1-8b-instant"
+    model: str = "auto"
     system_prompt: str = ""
 
 
 class RAGChatRequest(BaseModel):
     conversation_id: int
     message: str
-    model: str = "llama-3.1-8b-instant"
+    model: str = "auto"
     system_prompt: str = ""
     document_ids: list[int] = []
     n_results: int = 5
@@ -145,7 +145,7 @@ class PromptOut(BaseModel):
 class TestRunRequest(BaseModel):
     prompt_id: int
     variables: dict = {}
-    model: str = "llama-3.1-8b-instant"
+    model: str = "auto"
 
 
 # ─── Images ────────────────────────────────────────────────────────

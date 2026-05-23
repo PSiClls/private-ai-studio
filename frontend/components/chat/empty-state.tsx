@@ -69,7 +69,7 @@ export function EmptyState({ onSuggestionClick }: EmptyStateProps) {
         <div className="flex items-center justify-center gap-3">
           <ModelSelector
             models={models}
-            selectedModel={currentConv?.model || "llama-3.1-8b-instant"}
+            selectedModel={currentConv?.model || "auto"}
             onSelect={(m) => {
               if (currentConversationId) {
                 updateConversation(currentConversationId, { model: m })
