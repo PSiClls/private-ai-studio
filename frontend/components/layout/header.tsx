@@ -110,7 +110,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
           {!ollamaAvailable && (
             <Badge variant="destructive" className="gap-1 text-xs">
               <AlertCircle className="w-3 h-3" />
-              <span className="hidden sm:inline">Ollama not running</span>
+              <span className="hidden sm:inline">LLM not available</span>
             </Badge>
           )}
         </div>
@@ -139,9 +139,9 @@ export function Header({ onMenuToggle }: HeaderProps) {
             loading={modelLoading}
           />
           {!ollamaAvailable && (
-            <Badge variant="destructive" className="gap-1 cursor-pointer" title="Download from https://ollama.com">
+            <Badge variant="destructive" className="gap-1 cursor-pointer" title="Check LLM provider configuration">
               <AlertCircle className="w-3 h-3" />
-              Ollama unavailable &mdash; launch it
+              LLM unavailable
             </Badge>
           )}
         </div>
