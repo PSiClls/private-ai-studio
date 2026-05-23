@@ -1,3 +1,5 @@
+export const runtime = "edge"
+
 import { BACKEND_URL } from "@/lib/backend-url"
 
 export async function GET() {
