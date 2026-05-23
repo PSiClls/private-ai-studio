@@ -8,10 +8,6 @@ import { useToast } from "@/components/ui/toast"
 const DEFAULT_MODEL = "llama-3.1-8b-instant"
 const STREAM_TIMEOUT_MS = 120000
 
-const DIRECT_BACKEND_URL = typeof window !== "undefined" && window.location.hostname.includes("vercel.app")
-  ? "https://private-ai-studio-backend.onrender.com"
-  : ""
-
 function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === "AbortError"
 }
@@ -62,8 +58,7 @@ export function useStreamChat() {
       const systemPrompt = conv?.system_prompt || ""
 
       const isRag = store.ragMode && store.ragDocumentIds.length > 0
-      const streamPath = isRag ? "/api/chat/rag-stream" : "/api/chat/stream"
-      const endpoint = DIRECT_BACKEND_URL + streamPath
+      const endpoint = isRag ? "/api/chat/rag-stream" : "/api/chat/stream"
 
       const body = isRag
         ? {

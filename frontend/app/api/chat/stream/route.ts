@@ -1,3 +1,5 @@
+export const runtime = "edge"
+
 import { NextRequest } from "next/server"
 import { BACKEND_URL } from "@/lib/backend-url"
 
@@ -20,8 +22,6 @@ export async function POST(request: NextRequest) {
   if (!reader) {
     return new Response("No response body", { status: 502 })
   }
-
-  const encoder = new TextEncoder()
 
   const stream = new ReadableStream({
     async pull(controller) {
