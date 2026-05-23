@@ -5,10 +5,10 @@
   "outputDirectory": ".next",
   "functions": {
     "app/api/chat/stream/route.ts": {
-      "maxDuration": 60
+      "maxDuration": 30
     },
     "app/api/[...backend]/route.ts": {
-      "maxDuration": 60
+      "maxDuration": 30
     }
   }
 }
