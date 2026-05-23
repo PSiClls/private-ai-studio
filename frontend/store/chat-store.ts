@@ -13,6 +13,7 @@ interface ChatState {
   ollamaAvailable: boolean
   ragMode: boolean
   ragDocumentIds: number[]
+  autoSelectedModel: string | null
 
   setConversations: (convs: Conversation[]) => void
   addConversation: (conv: Conversation) => void
@@ -31,6 +32,7 @@ interface ChatState {
   setOllamaAvailable: (v: boolean) => void
   setRagMode: (v: boolean) => void
   setRagDocumentIds: (ids: number[]) => void
+  setAutoSelectedModel: (v: string | null) => void
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -45,6 +47,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   ollamaAvailable: false,
   ragMode: false,
   ragDocumentIds: [],
+  autoSelectedModel: null,
 
   setConversations: (conversations) => set({ conversations }),
 
@@ -97,4 +100,5 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setStreamingSources: (s) => set({ streamingSources: s }),
   setRagMode: (v) => set({ ragMode: v }),
   setRagDocumentIds: (ids) => set({ ragDocumentIds: ids }),
+  setAutoSelectedModel: (v) => set({ autoSelectedModel: v }),
 }))

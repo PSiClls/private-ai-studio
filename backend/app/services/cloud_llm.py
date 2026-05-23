@@ -1,7 +1,20 @@
+import asyncio
 import json
+import re
 from typing import AsyncGenerator, Optional
 import httpx
 from ..config import settings
+
+
+_RETRY_REGEX = re.compile(r"try again in (\d+(?:\.\d+)?)\s*s", re.IGNORECASE)
+
+
+def _parse_retry_after(error_text: str) -> float:
+    """Extract the retry-after seconds from a 429 error body."""
+    match = _RETRY_REGEX.search(error_text)
+    if match:
+        return float(match.group(1)) + 0.5
+    return 5.0
 
 
 class CloudLLMService:
@@ -104,6 +117,15 @@ class CloudLLMService:
 
         try:
             async with client.stream("POST", "/chat/completions", json=payload) as response:
+                if response.status_code == 429:
+                    error_body = await response.aread()
+                    err_text = error_body.decode()
+                    wait = _parse_retry_after(err_text)
+                    yield f"data: {json.dumps({'event': 'retry', 'data': str(wait)})}\n\n"
+                    await asyncio.sleep(wait)
+                    async with client.stream("POST", "/chat/completions", json=payload) as retry_resp:
+                        response = retry_resp
+
                 if response.status_code != 200:
                     error_body = await response.aread()
                     err_msg = f"LLM API error: {response.status_code} - {error_body.decode()}"

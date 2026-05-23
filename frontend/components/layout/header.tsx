@@ -33,8 +33,10 @@ export function Header({ onMenuToggle }: HeaderProps) {
     currentConversationId,
     models,
     ollamaAvailable,
+    autoSelectedModel,
     setModels,
     setOllamaAvailable,
+    setAutoSelectedModel,
     updateConversation,
   } = useChatStore()
 
@@ -135,9 +137,17 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <ModelSelector
             models={models}
             selectedModel={currentConv.model}
-            onSelect={handleModelChange}
+            onSelect={(model) => {
+              setAutoSelectedModel(null)
+              handleModelChange(model)
+            }}
             loading={modelLoading}
           />
+          {currentConv.model === "auto" && autoSelectedModel && (
+            <Badge variant="outline" className="gap-1 text-[10px] px-1.5 py-0 h-5 text-muted-foreground">
+              {autoSelectedModel}
+            </Badge>
+          )}
           {!ollamaAvailable && (
             <Badge variant="destructive" className="gap-1 cursor-pointer" title="Check LLM provider configuration">
               <AlertCircle className="w-3 h-3" />

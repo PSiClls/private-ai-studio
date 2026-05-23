@@ -127,18 +127,23 @@ export function useStreamChat() {
               case "done":
                 current.setStreamingContent("")
                 current.setIsStreaming(false)
-                api.conversations.messages.list(convId).then((msgs) => {
-                  const latest = useChatStore.getState()
-                  if (latest.currentConversationId === convIdRef.current) {
-                    latest.setMessages(msgs)
-                  }
-                }).catch(() => {})
+                if (current.currentConversationId === convIdRef.current) {
+                  api.conversations.messages.list(convId).then((msgs) => {
+                    const latest = useChatStore.getState()
+                    if (latest.currentConversationId === convIdRef.current) {
+                      latest.setMessages(msgs)
+                    }
+                  }).catch(() => {})
+                }
                 break
               case "title_suggestion":
                 current.updateConversation(convId, { title: data.data })
                 break
               case "model_info":
-                current.updateConversation(convId, { model: data.data })
+                current.setAutoSelectedModel(data.data)
+                break
+              case "retry":
+                current.setStreamingContent("[Rate limited, waiting " + data.data + "s before retry...]")
                 break
               case "error":
                 current.setIsStreaming(false)
