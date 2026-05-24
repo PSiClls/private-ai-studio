@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
 
 const ollamaSteps = [
   {
@@ -44,8 +44,28 @@ const ollamaSteps = [
   },
 ]
 
+const cloudProviders = [
+  {
+    name: "Groq (default)",
+    vars: ["GROQ_API_KEY", "LLM_PROVIDER=groq"],
+  },
+  {
+    name: "OpenRouter",
+    vars: ["OPENROUTER_API_KEY", "LLM_PROVIDER=openrouter"],
+  },
+  {
+    name: "OpenAI",
+    vars: ["OPENAI_API_KEY", "LLM_PROVIDER=openai"],
+  },
+  {
+    name: "Together AI",
+    vars: ["TOGETHER_API_KEY", "LLM_PROVIDER=together"],
+  },
+]
+
 export function SetupGuide({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
-  const [tab, setTab] = useState("ollama")
+  const [tab, setTab] = useState<"ollama" | "cloud">("ollama")
+  const [platform, setPlatform] = useState("macOS")
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,32 +73,51 @@ export function SetupGuide({ open, onOpenChange }: { open: boolean; onOpenChange
         <DialogHeader>
           <DialogTitle>Setup Guide</DialogTitle>
         </DialogHeader>
-        <Tabs value={tab} onValueChange={setTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="ollama">Local (Ollama)</TabsTrigger>
-            <TabsTrigger value="cloud">Cloud API</TabsTrigger>
-          </TabsList>
-          <TabsContent value="ollama" className="space-y-4 py-4">
+
+        {/* Tab switcher */}
+        <div className="flex gap-1 bg-muted rounded-lg p-1">
+          <button
+            className={cn("flex-1 text-sm py-1.5 px-3 rounded-md transition-colors", tab === "ollama" ? "bg-background font-medium shadow-sm" : "text-muted-foreground hover:text-foreground")}
+            onClick={() => setTab("ollama")}
+          >
+            Local (Ollama)
+          </button>
+          <button
+            className={cn("flex-1 text-sm py-1.5 px-3 rounded-md transition-colors", tab === "cloud" ? "bg-background font-medium shadow-sm" : "text-muted-foreground hover:text-foreground")}
+            onClick={() => setTab("cloud")}
+          >
+            Cloud API
+          </button>
+        </div>
+
+        {tab === "ollama" && (
+          <div className="space-y-4 py-2">
             <p className="text-sm text-muted-foreground">
               <strong>Ollama</strong> runs models locally on your machine. No data leaves your computer.
               Requires ~8GB RAM for 7B models, ~16GB for 13B models.
             </p>
-            <Tabs defaultValue="macOS">
-              <TabsList className="grid w-full grid-cols-4">
-                {ollamaSteps.map((p) => (
-                  <TabsTrigger key={p.platform} value={p.platform} className="text-xs">{p.platform}</TabsTrigger>
-                ))}
-              </TabsList>
+
+            {/* Platform selector */}
+            <div className="flex gap-1 bg-muted rounded-lg p-1">
               {ollamaSteps.map((p) => (
-                <TabsContent key={p.platform} value={p.platform} className="space-y-2 py-2">
-                  <ol className="space-y-2 text-sm list-decimal list-inside text-muted-foreground">
-                    {p.steps.map((s, i) => (
-                      <li key={i} dangerouslySetInnerHTML={{ __html: s }} />
-                    ))}
-                  </ol>
-                </TabsContent>
+                <button
+                  key={p.platform}
+                  className={cn("flex-1 text-xs py-1.5 px-2 rounded-md transition-colors", platform === p.platform ? "bg-background font-medium shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                  onClick={() => setPlatform(p.platform)}
+                >
+                  {p.platform}
+                </button>
               ))}
-            </Tabs>
+            </div>
+
+            {/* Steps */}
+            <ol className="space-y-2 text-sm list-decimal list-inside text-muted-foreground">
+              {ollamaSteps.find((p) => p.platform === platform)?.steps.map((s, i) => (
+                <li key={i} dangerouslySetInnerHTML={{ __html: s }} />
+              ))}
+            </ol>
+
+            {/* Recommended models */}
             <div className="bg-muted/50 rounded-lg p-3 space-y-1.5 text-sm">
               <p className="font-medium text-xs uppercase tracking-wider text-muted-foreground">Recommended models</p>
               <p className="text-xs text-muted-foreground">
@@ -89,32 +128,32 @@ export function SetupGuide({ open, onOpenChange }: { open: boolean; onOpenChange
                 <code className="text-xs bg-muted px-1 py-0.5 rounded">llama3.3:70b</code> — 70B, most capable
               </p>
             </div>
-          </TabsContent>
-          <TabsContent value="cloud" className="space-y-4 py-4">
+          </div>
+        )}
+
+        {tab === "cloud" && (
+          <div className="space-y-4 py-2">
             <p className="text-sm text-muted-foreground">
               <strong>Cloud LLM</strong> routes requests to remote APIs. No local GPU required.
               Configure via environment variables.
             </p>
             <div className="space-y-3">
-              <div className="bg-muted/50 rounded-lg p-3">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">Groq (default)</p>
-                <p className="text-xs text-muted-foreground">Set <code className="text-xs bg-muted px-1 py-0.5 rounded">GROQ_API_KEY</code> and <code className="text-xs bg-muted px-1 py-0.5 rounded">LLM_PROVIDER=groq</code></p>
-              </div>
-              <div className="bg-muted/50 rounded-lg p-3">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">OpenRouter</p>
-                <p className="text-xs text-muted-foreground">Set <code className="text-xs bg-muted px-1 py-0.5 rounded">OPENROUTER_API_KEY</code> and <code className="text-xs bg-muted px-1 py-0.5 rounded">LLM_PROVIDER=openrouter</code></p>
-              </div>
-              <div className="bg-muted/50 rounded-lg p-3">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">OpenAI</p>
-                <p className="text-xs text-muted-foreground">Set <code className="text-xs bg-muted px-1 py-0.5 rounded">OPENAI_API_KEY</code> and <code className="text-xs bg-muted px-1 py-0.5 rounded">LLM_PROVIDER=openai</code></p>
-              </div>
-              <div className="bg-muted/50 rounded-lg p-3">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">Together AI</p>
-                <p className="text-xs text-muted-foreground">Set <code className="text-xs bg-muted px-1 py-0.5 rounded">TOGETHER_API_KEY</code> and <code className="text-xs bg-muted px-1 py-0.5 rounded">LLM_PROVIDER=together</code></p>
-              </div>
+              {cloudProviders.map((p) => (
+                <div key={p.name} className="bg-muted/50 rounded-lg p-3">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">{p.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Set {p.vars.map((v, i) => (
+                      <span key={v}>
+                        {i > 0 && " and "}
+                        <code className="text-xs bg-muted px-1 py-0.5 rounded">{v}</code>
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              ))}
             </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )
