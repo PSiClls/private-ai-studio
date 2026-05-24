@@ -39,7 +39,7 @@ const ollamaSteps = [
     steps: [
       'Run: <code class="text-xs bg-muted px-1 py-0.5 rounded">docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama</code>',
       'Then pull a model: <code class="text-xs bg-muted px-1 py-0.5 rounded">docker exec -it ollama ollama pull llama3.2</code>',
-      "Set environment variable: <code class="text-xs bg-muted px-1 py-0.5 rounded">OLLAMA_BASE_URL=http://localhost:11434</code>",
+      'Set environment variable: <code class="text-xs bg-muted px-1 py-0.5 rounded">OLLAMA_BASE_URL=http://localhost:11434</code>',
     ],
   },
 ]

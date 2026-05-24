@@ -104,31 +104,32 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
   if (!currentConv) {
     return (
-      <header className="h-12 border-b border-border flex items-center justify-between px-2 sm:px-4 bg-card">
-        <div className="flex items-center gap-2">
-          {onMenuToggle && (
-            <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={onMenuToggle}>
-              <Menu className="h-4 w-4" />
+      <>
+        <header className="h-12 border-b border-border flex items-center justify-between px-2 sm:px-4 bg-card">
+          <div className="flex items-center gap-2">
+            {onMenuToggle && (
+              <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={onMenuToggle}>
+                <Menu className="h-4 w-4" />
+              </Button>
+            )}
+            {!ollamaAvailable && (
+              <Badge variant="destructive" className="gap-1 text-xs">
+                <AlertCircle className="w-3 h-3" />
+                <span className="hidden sm:inline">LLM not available</span>
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSetupGuideOpen(true)} title="Setup guide">
+              <HelpCircle className="h-4 w-4" />
             </Button>
-          )}
-          {!ollamaAvailable && (
-            <Badge variant="destructive" className="gap-1 text-xs">
-              <AlertCircle className="w-3 h-3" />
-              <span className="hidden sm:inline">LLM not available</span>
-            </Badge>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSetupGuideOpen(true)} title="Setup guide">
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleTheme}>
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-        </div>
-      </header>
-
-      <SetupGuide open={setupGuideOpen} onOpenChange={setSetupGuideOpen} />
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+          </div>
+        </header>
+        <SetupGuide open={setupGuideOpen} onOpenChange={setSetupGuideOpen} />
+      </>
     )
   }
 
