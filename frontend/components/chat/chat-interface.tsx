@@ -130,7 +130,7 @@ export function ChatInterface({ initialMessage, onMessageSent }: ChatInterfacePr
             )}
 
             {messages.map((msg, i) => (
-              <div key={msg.id}>
+              <div key={msg.id} className="message-enter">
                 <ChatMessage
                   role={msg.role as "user" | "assistant"}
                   content={msg.content}
@@ -146,7 +146,7 @@ export function ChatInterface({ initialMessage, onMessageSent }: ChatInterfacePr
             ))}
 
             {isStreaming && streamingContent && (
-              <div>
+              <div className="message-enter">
                 <ChatMessage role="assistant" content={streamingContent} isStreaming />
                 {streamingSources.length > 0 && (
                   <div className="max-w-3xl mx-auto mb-4">

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useChatStore } from "@/store/chat-store"
 import { ConversationList } from "@/components/chat/conversation-list"
 import { api } from "@/lib/api"
-import { PanelLeftClose, PanelLeft } from "lucide-react"
+import { PanelLeftClose, PanelLeft, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/toast"
 import type { Message } from "@/types"
@@ -28,12 +28,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [messagesByConv, setMessagesByConv] = useState<Record<number, Message[]>>({})
+  const [loading, setLoading] = useState(true)
   const { addToast } = useToast()
 
   useEffect(() => {
+    setLoading(true)
     api.conversations.list().then(setConversations).catch((err) => {
       addToast("error", "Failed to load conversations", err instanceof Error ? err.message : undefined)
-    })
+    }).finally(() => setLoading(false))
   }, [setConversations, addToast])
 
   useEffect(() => {
@@ -111,17 +113,23 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </Button>
       </div>
       <div className="flex-1 overflow-hidden">
-        <ConversationList
-          conversations={conversations}
-          messagesByConv={messagesByConv}
-          currentId={currentConversationId}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onSelect={handleSelect}
-          onNew={handleNew}
-          onDelete={handleDelete}
-          onRename={handleRename}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <ConversationList
+            conversations={conversations}
+            messagesByConv={messagesByConv}
+            currentId={currentConversationId}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onSelect={handleSelect}
+            onNew={handleNew}
+            onDelete={handleDelete}
+            onRename={handleRename}
+          />
+        )}
       </div>
     </div>
   )

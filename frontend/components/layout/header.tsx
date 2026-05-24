@@ -6,7 +6,7 @@ import { ModelSelector } from "@/components/chat/model-selector"
 import { api } from "@/lib/api"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Settings, Sun, Moon, AlertCircle, Menu } from "lucide-react"
+import { Settings, Sun, Moon, AlertCircle, Menu, HelpCircle } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/toast"
+import { SetupGuide } from "@/components/setup-guide"
 
 interface HeaderProps {
   onMenuToggle?: () => void
@@ -42,6 +43,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
   const [modelLoading, setModelLoading] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [setupGuideOpen, setSetupGuideOpen] = useState(false)
   const [theme, setTheme] = useState<"light" | "dark">("dark")
   const { addToast } = useToast()
 
@@ -117,11 +119,16 @@ export function Header({ onMenuToggle }: HeaderProps) {
           )}
         </div>
         <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSetupGuideOpen(true)} title="Setup guide">
+            <HelpCircle className="h-4 w-4" />
+          </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleTheme}>
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
         </div>
       </header>
+
+      <SetupGuide open={setupGuideOpen} onOpenChange={setSetupGuideOpen} />
     )
   }
 

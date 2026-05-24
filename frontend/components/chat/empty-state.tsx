@@ -1,9 +1,11 @@
 "use client"
 
-import { MessageSquare, Sparkles, FileText, Code, Brain, Globe, Pen } from "lucide-react"
+import { useState } from "react"
+import { MessageSquare, Sparkles, FileText, Code, Brain, Globe, Pen, HelpCircle } from "lucide-react"
 import { useChatStore } from "@/store/chat-store"
 import { Button } from "@/components/ui/button"
 import { ModelSelector } from "./model-selector"
+import { SetupGuide } from "@/components/setup-guide"
 
 const suggestions = [
   {
@@ -44,6 +46,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ onSuggestionClick }: EmptyStateProps) {
   const { models, ollamaAvailable, currentConversationId, updateConversation, conversations } = useChatStore()
+  const [setupOpen, setSetupOpen] = useState(false)
 
   const currentConv = conversations.find((c) => c.id === currentConversationId)
 
@@ -60,24 +63,28 @@ export function EmptyState({ onSuggestionClick }: EmptyStateProps) {
               Private AI Studio
             </h1>
             <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              Your local, private AI workspace. All processing stays on your machine — zero data leaves your computer.
+              Your private AI workspace powered by local and cloud LLMs.
             </p>
           </div>
         </div>
 
-        {/* Model selector */}
+        {/* Model selector / setup */}
         <div className="flex items-center justify-center gap-3">
-          <ModelSelector
-            models={models}
-            selectedModel={currentConv?.model || "auto"}
-            onSelect={(m) => {
-              if (currentConversationId) {
-                updateConversation(currentConversationId, { model: m })
-              }
-            }}
-          />
-          {!ollamaAvailable && (
-            <p className="text-xs text-destructive">Ollama not detected</p>
+          {ollamaAvailable ? (
+            <ModelSelector
+              models={models}
+              selectedModel={currentConv?.model || "auto"}
+              onSelect={(m) => {
+                if (currentConversationId) {
+                  updateConversation(currentConversationId, { model: m })
+                }
+              }}
+            />
+          ) : (
+            <Button variant="outline" size="sm" onClick={() => setSetupOpen(true)}>
+              <HelpCircle className="w-4 h-4 mr-2" />
+              Setup guide
+            </Button>
           )}
         </div>
 
@@ -111,10 +118,12 @@ export function EmptyState({ onSuggestionClick }: EmptyStateProps) {
         <p className="text-xs text-muted-foreground/60">
           {ollamaAvailable
             ? "Ready — select a model and start typing"
-            : "Install Ollama to start chatting"
+            : "No LLM available — check the setup guide"
           }
         </p>
       </div>
+
+      <SetupGuide open={setupOpen} onOpenChange={setSetupOpen} />
     </div>
   )
 }
